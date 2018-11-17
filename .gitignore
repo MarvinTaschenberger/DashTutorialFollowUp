@@ -2,3 +2,4 @@ data/
 venv
 *.csv
 *DS_STORE
+.idea/

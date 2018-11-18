@@ -25,13 +25,23 @@ app.layout = html.Div([
         step=5,
         marks={str(year):str(year) for year in df.year.unique()
                }
+        ),
+    html.Br(),
+    html.Label("X-Scale"),
+    dcc.RadioItems(
+        id="scale-radio",
+        options=[{"label": "Linear", "value": "linear"},
+                 {"label": "Log", "value": "log"}],
+        value="Log",
+        labelStyle={"display":"inline-block"}
         )
     ])
 @app.callback(
     Output("graph-with-slider","figure"),
-    [Input("year-slider", "value")]
+    [Input("year-slider", "value"),
+     Input("scale-radio", "value")]
     )
-def update_figure(selected_year):
+def update_figure(selected_year, scale):
     filtered_df = df[df.year == selected_year]
     traces = list()
     for i in filtered_df.continent.unique():
@@ -51,7 +61,7 @@ def update_figure(selected_year):
     return {
         "data":traces,
         "layout": go.Layout(
-            xaxis={"type":"log", "title":"GDP per Capita"},
+            xaxis={"type":scale.lower(), "title":"GDP per Capita"},
             yaxis={"title":"Life Expectancy", "range":[20,90]},
             margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
             legend={'x': 0, 'y': 1},
